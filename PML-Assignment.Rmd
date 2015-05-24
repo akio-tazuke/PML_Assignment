@@ -1,0 +1,60 @@
+---
+title: "PML-Assignment"
+author: "Akio Tazuke"
+date: "2015/5/24"
+output: html_document
+---
+
+   The dataframe contained numerical, integer and factor variables. First, I tried a principal component preprocessing for numerical and integer variables. The contribution of even the first principal component was very low, suggesting the variables yield very week model. Also, there are also factor variables. This situation seemed to me that it's good to try the random forest. I chose 5 cross-validations. The result was as follows.
+
+Random Forest 
+
+406 samples
+159 predictors
+  5 classes: 'A', 'B', 'C', 'D', 'E' 
+
+No pre-processing
+Resampling: Cross-Validated (5 fold) 
+
+Summary of sample sizes: 324, 324, 325, 327, 324 
+
+Resampling results across tuning parameters:
+
+```{r, results = 'asis', echo = FALSE}
+library(knitr)
+mtry <- c(2, 117, 6952)
+acc <- c(0.2684612, 0.8763885, 0.9926829)
+kap <- c(0.0, 0.8433573, 0.9907831)
+acSD <- c(0.002057275, 0.039383879, 0.010907649)
+kSD <- c(0.0, 0.05078721, 0.01373658)
+df <- data.frame(mtry = mtry, Accuracy = acc, Kappa = kap, Accuracy_SD = acSD, Kappa_SD = kSD)
+kable(df, format = "markdown")
+```
+
+Accuracy was used to select the optimal model using  the
+ largest value.
+The final value used for the model was mtry = 6952. 
+
+Call:
+ randomForest(x = x, y = y, mtry = param$mtry, proximity = TRUE,      allowParallel = TRUE) 
+               Type of random forest: classification
+                     Number of trees: 500
+No. of variables tried at each split: 6952
+
+        OOB estimate of  error rate: 0.74%
+Confusion matrix:
+```{r, results='asis', echo = FALSE}
+library(knitr)
+aa <- c(109, 0, 0, 0, 0)
+bb <- c(0, 78, 1, 0, 0)
+cc <- c(0, 1, 69, 0, 0)
+dd <- c(0, 0, 0, 69, 1)
+ee <- c(0, 0, 0, 0, 78)
+Err <- c(0.0, 0.01265823, 0.01428571, 0.0, 0.01265823)
+df <- data.frame(A = aa, B = bb, C = cc, D = dd, E = ee, Class.error = Err)
+kable(df, format = "markdown")
+```
+
+   Seen from the confusion matrix, the final model seems to be a very good one.
+
+
